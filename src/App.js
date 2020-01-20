@@ -36,6 +36,10 @@ function makeMushroom(
 
     let nextPoint = [newx, newy];
 
+    let padding = 50;
+    if (newx < padding || newx > width - padding || newy < padding) {
+      break;
+    }
     points.push(nextPoint);
     current = nextPoint;
   }
