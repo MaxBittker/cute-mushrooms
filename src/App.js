@@ -15,13 +15,11 @@ function makeMushroom(
 ) {
   let a = startAngle;
   let da = 0;
-  // Math.random() * 2 * Math.PI;
-  let n = 70 + 40 * noise.simplex2(mi / 20, t);
-  // Math.random();
+  let n = 110 + 110 * noise.simplex2(mi / 10, t * 0.2);
 
   let points = [start];
   let current = start;
-  let step_size = 4.0;
+  let step_size = 3.0;
 
   for (let i = 0; i < n; i++) {
     let newx = current[0];
@@ -31,7 +29,7 @@ function makeMushroom(
     newy += Math.cos(a) * step_size;
 
     a += da;
-    da += noise.simplex2(0.4 + mi * 6234, i * 966.555 + t * 3.1) * 0.02;
+    da += noise.simplex2(0.4 + mi * 6234, i * 966.555 + t * 0.5) * 0.01;
     da *= 0.9;
 
     let nextPoint = [newx, newy];
@@ -50,18 +48,21 @@ function Mushroom({ i, t, start, startAngle }) {
   let points = makeMushroom(i, t, start, startAngle);
   let [headx, heady] = points[points.length - 1];
   let cn = noise.simplex2(i * 88.88, 0);
+  if (points.length < 5) {
+    return null;
+  }
   return (
     <Fragment>
       <polyline
         points={pointsToString(points)}
         fill="none"
         stroke={`hsl(35, ${60 + 10 * cn}%, ${85 + 5 * cn}%)`}
-        strokeWidth={20 + points.length / 10}
+        strokeWidth={20 + points.length / 15}
       />
       <circle
         cx={headx}
         cy={heady}
-        r={30}
+        r={20 + points.length / 15}
         fill={`hsl(25, ${80 + 10 * cn}%, ${80 + 5 * cn}%)`}
       ></circle>
     </Fragment>
@@ -83,7 +84,7 @@ function Clump({ n, t }) {
         // sx += r * Math.sin(ni * 2 * Math.PI);
         // sy += r * Math.cos(ni * 2 * Math.PI);
         // let startAngle = ni * 2 * Math.PI;
-        sx += ci * 25;
+        sx += ci * 20;
         let startAngle = Math.PI;
         return (
           <Mushroom
