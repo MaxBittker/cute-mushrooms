@@ -1,6 +1,8 @@
 import React, { Fragment } from "react";
 import { pointsToString } from "./utils.js";
 import { noise } from "./perlin.js";
+import * as Perlin2D from "wasm-noise";
+console.log(Perlin2D);
 noise.seed(Math.random());
 
 console.log(noise);
@@ -15,13 +17,17 @@ function makeMushroom(
 ) {
   let a = startAngle;
   let da = 0;
-  let n = 110 + 110 * noise.simplex2(mi / 10, t * 0.2);
+  let n = 110 + 90 * noise.simplex2(mi * 9.112, t * 0.2);
+  n /= 5;
 
   let points = [start];
   let current = start;
-  let step_size = 3.0;
+  let step_size = 10.0;
 
   for (let i = 0; i < n; i++) {
+    if (n - i < 1.0) {
+      step_size *= Math.abs(n - i);
+    }
     let newx = current[0];
     let newy = current[1];
 
@@ -29,8 +35,8 @@ function makeMushroom(
     newy += Math.cos(a) * step_size;
 
     a += da;
-    da += noise.simplex2(0.4 + mi * 6234, i * 966.555 + t * 0.5) * 0.01;
-    da *= 0.9;
+    da += noise.simplex2(0.4 + mi * 0.23, i * 6.555 + t * 0.9) * 0.02;
+    da *= 0.95;
 
     let nextPoint = [newx, newy];
 
@@ -44,25 +50,28 @@ function makeMushroom(
   return points;
 }
 
-function Mushroom({ i, t, start, startAngle }) {
+function Mushroom({ ni, i, t, start, startAngle }) {
   let points = makeMushroom(i, t, start, startAngle);
   let [headx, heady] = points[points.length - 1];
   let cn = noise.simplex2(i * 88.88, 0);
+  cn += ni - 0.5;
+  // cn *= 10;
   if (points.length < 5) {
     return null;
   }
+  let size = 15 + points.length / 5;
   return (
     <Fragment>
       <polyline
         points={pointsToString(points)}
         fill="none"
         stroke={`hsl(35, ${60 + 10 * cn}%, ${85 + 5 * cn}%)`}
-        strokeWidth={20 + points.length / 15}
+        strokeWidth={size}
       />
       <circle
         cx={headx}
         cy={heady}
-        r={20 + points.length / 15}
+        r={size * 0.9}
         fill={`hsl(25, ${80 + 10 * cn}%, ${80 + 5 * cn}%)`}
       ></circle>
     </Fragment>
@@ -84,11 +93,13 @@ function Clump({ n, t }) {
         // sx += r * Math.sin(ni * 2 * Math.PI);
         // sy += r * Math.cos(ni * 2 * Math.PI);
         // let startAngle = ni * 2 * Math.PI;
-        sx += ci * 20;
+        sx += ci * 18;
+        // (noise.simplex2(i * 0.88, 0) * width) / 5;
         let startAngle = Math.PI;
         return (
           <Mushroom
             i={i}
+            ni={ni}
             t={t}
             start={[sx, sy]}
             startAngle={startAngle}
