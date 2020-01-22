@@ -14,7 +14,7 @@
 importScripts("https://storage.googleapis.com/workbox-cdn/releases/4.3.1/workbox-sw.js");
 
 importScripts(
-  "/cute-mushrooms/precache-manifest.931f1e93ec879c3f0be4a508d1b66498.js"
+  "/cute-mushrooms/precache-manifest.cc50f9b98290ead0666ddb1a27f5872f.js"
 );
 
 self.addEventListener('message', (event) => {
